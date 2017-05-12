@@ -207,8 +207,8 @@ class InputNewData(InputData):
 
         while(self.current_row < self.worksheet.nrows - 1):
             input_data = InputNewFile(self)
-            if input_data.job_list:  #nothing to write from data at beginning and end
-                self.date_data_dict[input_data.process_date] =  input_data
+            if input_data.job_list:  #nothing to write from data at beginning and end of file
+                self.date_data_dict[input_data.job_list[0].start_date] =  input_data
 
 
 class InputFile():
@@ -260,26 +260,13 @@ class InputNewFile(InputFile):
 
     def __init__(self, input_new_data):
         
-        def set_process_date():
-            
-            if self.job_list: 
-                self.process_date = self.job_list[0].start_date
-            else:
-                self.process_date = job_data.start_date    #only for first few lines
-                
-        
         super().__init__()
         
-        first_line = True
         for input_new_data.current_row in range (input_new_data.current_row,  input_new_data.worksheet.nrows):
             job_data = NewJobData(input_new_data)
-            if job_data.job_id == 'PR_PRDBBING1' and not first_line:
-                set_process_date()
+            if job_data.job_id == 'PR_PRDBBING1' and self.job_list:
                 return
             self.process_job_data(job_data)
-            first_line = False
-            
-        set_process_date()  #when data is exhausted
         
 
 class JobData():
@@ -379,7 +366,6 @@ def set_ignore_dict():
                    'PRFDXFER' : True,
                    'PRP19117' : True,
                    'FILEE449' : True,
-                   'PRPD9066' : True,      #repeated in new data for some reason
                    'CHEQUES_READY' : True,
                    'ING_DISB_EXE' : True,
                    'COMPLETE_STATUS_CHECK' : True,
